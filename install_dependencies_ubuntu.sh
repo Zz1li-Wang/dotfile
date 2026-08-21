@@ -44,7 +44,18 @@ trap 'rm -rf "$tmp_dir"' EXIT
 curl -fL \
     "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-${nvim_arch}.tar.gz" \
     -o "$tmp_dir/nvim.tar.gz"
-sudo tar -C /opt -xzf "$tmp_dir/nvim.tar.gz"
+
+# Do not extract over an older installation. Files removed by a newer Neovim
+# release would otherwise remain in runtime/ and could be loaded by the new
+# binary, producing hard-to-diagnose internal API errors.
+tar -C "$tmp_dir" -xzf "$tmp_dir/nvim.tar.gz"
+nvim_install_dir="$tmp_dir/nvim-linux-${nvim_arch}"
+if [ ! -x "$nvim_install_dir/bin/nvim" ]; then
+    echo '[ERROR] The downloaded Neovim archive has an unexpected layout.'
+    exit 1
+fi
+sudo rm -rf -- "/opt/nvim-linux-${nvim_arch}"
+sudo mv -- "$nvim_install_dir" "/opt/nvim-linux-${nvim_arch}"
 sudo ln -sf "/opt/nvim-linux-${nvim_arch}/bin/nvim" /usr/local/bin/nvim
 
 # nvim-treesitter requires the official tree-sitter CLI >= 0.26.1 (not npm).

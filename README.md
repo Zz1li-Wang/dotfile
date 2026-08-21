@@ -50,6 +50,9 @@ Tree-sitter CLI：
 bash install_dependencies_ubuntu.sh
 ```
 
+脚本会先在临时目录中完整解压并验证 Neovim，再替换 `/opt` 中的旧安装，避免升级时
+残留旧 runtime 文件导致二进制与 runtime 版本不一致。
+
 应用配置前，先检查环境：
 
 ```sh

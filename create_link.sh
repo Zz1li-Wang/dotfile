@@ -1,6 +1,7 @@
 create_symlinks() {
 	src="$1"
 	target="$2"
+	target_parent=$(dirname "$target")
 
 	if [ -L "$target" ]; then
 		current_link=$(readlink "$target")
@@ -16,9 +17,14 @@ create_symlinks() {
     if [ -e "$target" ]; then
 		echo "[NOTIFY]: $target already exists. Please remove it first."
 		return 1
-    fi
+	fi
 
-	ln -s "$src" "$target"
+	if [ ! -d "$target_parent" ]; then
+		echo "[INFO]: Target directory $target_parent does not exist. Creating it."
+		mkdir -p "$target_parent" || return 1
+	fi
+
+	ln -s "$src" "$target" || return 1
 	echo "[SUCCESS]: $target -> $src"
 }
 
