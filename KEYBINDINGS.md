@@ -96,8 +96,10 @@
 
 | 按键 | 功能 |
 |------|------|
-| `Alt-H`（Shift+Alt+h） / `Shift-←` | 上一个窗口 |
-| `Alt-L`（Shift+Alt+l） / `Shift-→` | 下一个窗口 |
+| `Alt-H`（Shift+Alt+h） | 上一个窗口 |
+| `Alt-L`（Shift+Alt+l） | 下一个窗口 |
+
+`Shift+方向键` 留给 Codex 等面板内程序，直接按即可，无需 Prefix；tmux 不再用 `Shift-←/→` 切换窗口。
 
 ### 分屏与新窗口
 

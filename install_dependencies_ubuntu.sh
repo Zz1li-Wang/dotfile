@@ -9,7 +9,7 @@ fi
 
 sudo apt-get update
 sudo apt-get install -y \
-    bat build-essential curl fd-find fzf git golang-go nodejs npm \
+    bat build-essential curl fd-find git golang-go nodejs npm \
     python3 python3-venv ripgrep tar unzip zoxide zsh
 
 # Ubuntu names these executables differently from the upstream tools.
@@ -23,10 +23,12 @@ fi
 machine=$(uname -m)
 case "$machine" in
     x86_64)
+        fzf_arch='amd64'
         nvim_arch='x86_64'
         tree_sitter_arch='x64'
         ;;
     aarch64|arm64)
+        fzf_arch='arm64'
         nvim_arch='arm64'
         tree_sitter_arch='arm64'
         ;;
@@ -38,6 +40,15 @@ esac
 
 tmp_dir=$(mktemp -d)
 trap 'rm -rf "$tmp_dir"' EXIT
+
+# Ubuntu's fzf package is too old for the fzf-lua configuration. Install the
+# pinned upstream binary so the shell and Neovim use the same version.
+fzf_version='0.74.3'
+curl -fL \
+    "https://github.com/junegunn/fzf/releases/download/v${fzf_version}/fzf-${fzf_version}-linux_${fzf_arch}.tar.gz" \
+    -o "$tmp_dir/fzf.tar.gz"
+tar -C "$tmp_dir" -xzf "$tmp_dir/fzf.tar.gz" fzf
+install -Dm0755 "$tmp_dir/fzf" "$HOME/.local/bin/fzf"
 
 # The nvim-treesitter main branch requires Neovim >= 0.12. Use the latest
 # stable archive so fresh machines get a supported, reproducible release line.
